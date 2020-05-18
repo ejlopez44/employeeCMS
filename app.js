@@ -37,7 +37,7 @@ const mainMenu = () => {
             viewEmpByDept()
         }
         // if (pick === "View All Employees by Manager") {
-
+        // Insert future function
         // }
         if (pick === "Add Employee") {
             addEmploy()
@@ -49,7 +49,7 @@ const mainMenu = () => {
             updateEmp()
         }
         // if (pick === "Update Employee Manager") {
-
+        // Insert future function
         // }
         if (pick === "View All Roles") {
             viewRoles();
@@ -112,7 +112,13 @@ const delDept = () => {
     })
 }
 const viewDepts = () => {
-    connection.query("SELECT * FROM departments", function (err, res) {
+    connection.query(`SELECT departments.id, departments.name AS Department, 
+    SUM(roles.salary) Budget,
+    COUNT(departments.id) totEmployees
+    FROM employees
+    LEFT JOIN roles ON employees.role_id = roles.id
+    LEFT JOIN departments ON roles.department_id = departments.id
+    GROUP BY departments.name;`, function (err, res) {
         if (err) throw err;
         //Need to display the data as a table using console.table
         console.table(res)
@@ -201,7 +207,6 @@ const delRole = () => {
             })
     })
 }
-
 const viewRoles = () => {
     connection.query("SELECT * FROM roles", function (err, res) {
         if (err) throw err;
@@ -258,7 +263,6 @@ const addEmploy = () => {
         })
     })
 }
-
 const viewEmployees = () => {
     connection.query("SELECT * FROM employees", function (err, res) {
         if (err) throw err;
@@ -266,7 +270,6 @@ const viewEmployees = () => {
         mainMenu()
     })
 }
-
 const delEmploy = () => {
     // Start by obtaining all the employees available
     connection.query("SELECT * FROM employees", function (err, results) {
@@ -347,8 +350,8 @@ const updateEmp = () => {
             })
 
     })
-} // End of updateEmp function
-
+}
+// Function necessary to finalize updating employee record
 const updateEmployeeRecord = (roleId, firstName, lastName) => {
     connection.query("UPDATE employees SET ? WHERE first_name = ? AND last_name = ?", [{ role_id: roleId }, firstName, lastName], function (err) {
         if (err) throw err;
